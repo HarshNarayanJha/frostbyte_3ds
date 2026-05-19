@@ -1,0 +1,35 @@
+// Static tasks configuration.
+//
+[
+  {
+    "label": "Make",
+    "command": "make",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "no_focus",
+    "reveal_target": "dock",
+    "hide": "on_success",
+    "shell": "system",
+    "tags": []
+  },
+  {
+    "label": "Run in Azahar",
+    "command": "make && azahar build/3ds_template.3dsx",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "no_focus",
+    "hide": "on_success",
+    "shell": "system",
+    "tags": []
+  },
+  {
+    "label": "Run on 3DS",
+    "command": "make && cmake --build build --target netload",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "no_focus",
+    "hide": "on_success",
+    "shell": "system",
+    "tags": []
+  }
+]
