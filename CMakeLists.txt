@@ -15,6 +15,7 @@ string(REPLACE "-mword-relocations" "" CMAKE_CXX_FLAGS_FILTERED "${CMAKE_CXX_FLA
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_FILTERED} ${DKA_SUGGESTED_CXX_FLAGS_FILTERED} ${EXTRA_CMAKE_CXX_FLAGS}")
 
 set(SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/src)
+set(INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/include)
 set(RES_DIR ${CMAKE_CURRENT_LIST_DIR}/res)
 
 set(GRAPHICS_DIR ${CMAKE_CURRENT_LIST_DIR}/gfx)
@@ -38,12 +39,15 @@ find_package(CITRO2D REQUIRED)
 find_package(CITRO3D REQUIRED)
 find_package(CTRULIB REQUIRED)
 
-# later
-# file(GLOB_RECURSE SOURCE_FILES
-#     ${SRC_DIR}/*
-# )
 
-set(SOURCE_FILES src/main.cpp)
+# later
+file(GLOB_RECURSE SOURCE_FILES
+    ${SRC_DIR}/*
+    # ${INCLUDE_DIR}/*
+)
+
+
+# set(SOURCE_FILES src/main.cpp)
 
 # this generates the .t3x's inside the romfs/gfx folder and also makes sure romfs is included in the binaries
 # for that, _3DSXTOOL_ROMFS needs to be set to a target name
@@ -55,6 +59,7 @@ generate_t3xs(${_3DSXTOOL_ROMFS}
 add_executable(frostbyte_3ds ${SOURCE_FILES})
 target_link_libraries(frostbyte_3ds 3ds::citro2d 3ds::citro3d 3ds::ctrulib)
 target_compile_definitions(frostbyte_3ds PRIVATE)
+# target_include_directories(frostbyte_3ds PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 # make sure the generated texture headers can be included
 target_include_directories(frostbyte_3ds PRIVATE
     ${CMAKE_BINARY_DIR}
