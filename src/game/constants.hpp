@@ -7,6 +7,12 @@
 #define SCREEN_HEIGHT 240
 #define BORDER_WIDTH 2
 
+constexpr float SPEED            = 300.0f;
+constexpr float ACCELERATION     = 200.0f;
+constexpr float DECELERATION     = 50.0f;
+constexpr float GRAVITY_CONSTANT = 1000000.0f;
+
+/* Colors */
 const u32 clrClear  = C2D_Color32(0xFF, 0xFF, 0xFF, 0xFF);
 const u32 clrBg     = C2D_Color32(0x12, 0x12, 0x12, 0xFF);
 

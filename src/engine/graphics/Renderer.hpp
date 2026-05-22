@@ -45,4 +45,13 @@ public:
                         float z = 0.5f) {
     C2D_DrawCircle(pos.x, pos.y, z, radius, colorTL, colorTR, colorBL, colorBR);
   }
+
+  void drawTriangle(const Vec2 &pos, float size, u32 color, float z = 0.5f) {
+    float halfSize = size / 2.0f;
+    Vec2  p1       = pos + Vec2(halfSize, 0.0f);
+    Vec2  p2       = pos + Vec2(-halfSize, halfSize);
+    Vec2  p3       = pos + Vec2(-halfSize, -halfSize);
+
+    C2D_DrawTriangle(p1.x, p1.y, color, p2.x, p2.y, color, p3.x, p3.y, color, z);
+  }
 };

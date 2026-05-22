@@ -2,7 +2,7 @@
 //
 [
   {
-    "label": "Make",
+    "label": "Make (clean)",
     "command": "make",
     "use_new_terminal": false,
     "allow_concurrent_runs": false,
@@ -10,7 +10,17 @@
     "reveal_target": "dock",
     "hide": "on_success",
     "shell": "system",
-    "tags": []
+    "tags": ["make", "clean"]
+  },
+  {
+    "label": "Make (build)",
+    "command": "make build",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "no_focus",
+    "hide": "on_success",
+    "shell": "system",
+    "tags": ["make", "build"]
   },
   {
     "label": "Run in Azahar",
@@ -20,7 +30,7 @@
     "reveal": "no_focus",
     "hide": "on_success",
     "shell": "system",
-    "tags": []
+    "tags": ["make", "run"]
   },
   {
     "label": "Run on 3DS",
@@ -30,6 +40,6 @@
     "reveal": "no_focus",
     "hide": "on_success",
     "shell": "system",
-    "tags": []
+    "tags": ["make", "run", "3ds"]
   }
 ]

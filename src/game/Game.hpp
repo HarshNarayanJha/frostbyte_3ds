@@ -1,16 +1,16 @@
 #pragma once
 
-#include "../engine/core/Engine.hpp"
-#include "data/Level.hpp"
-#include "entities/Block.hpp"
-#include "entities/Player.hpp"
-
 #include <memory>
 #include <vector>
 
+class Engine;
+class Player;
+class Block;
+class Snowflake;
+
 class Game {
 public:
-  Game(Player player, std::vector<Block> blocks);
+  Game(Player player, std::vector<Block> blocks, std::vector<Snowflake> snowflakes);
   ~Game();
 
   Engine &getEngine() {
@@ -23,6 +23,7 @@ public:
 private:
   std::unique_ptr<Engine> m_engine;
 
-  Player m_player;
+  std::unique_ptr<Player> m_player;
   std::vector<Block> m_blocks;
+  std::vector<Snowflake> m_snowflakes;
 };

@@ -2,20 +2,21 @@
 
 #include "../../engine/math/Math.hpp"
 
-class Renderer;
 struct Rect;
+class Renderer;
 
-class Block {
+class Snowflake {
 private:
-  Vec2 m_pos;
-  Vec2 m_size;
+  Vec2  m_pos;
+  float m_size;
 
 public:
-  Block(float x, float y, float w, float h);
-  ~Block() = default;
+  Snowflake(float x, float y, float size);
+  ~Snowflake() = default;
 
   void update(float dt);
   void draw(Renderer &renderer);
+  void consume();
 
   Rect getRect() const;
 };

@@ -5,8 +5,8 @@ BasedOnStyle: LLVM
 IndentWidth: 2
 ColumnLimit: 120
 Standard: c++20
-AlignConsecutiveAssignments: AcrossEmptyLinesAndComments
-AlignConsecutiveDeclarations: None
+AlignConsecutiveAssignments: AcrossEmptyLines
+AlignConsecutiveDeclarations: Consecutive
 AllowShortFunctionsOnASingleLine: Empty
 BraceWrapping:
   AfterClass: true

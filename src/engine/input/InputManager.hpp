@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../math/Math.hpp"
+
 #include <3ds.h>
 
 /**
@@ -12,8 +14,15 @@ public:
    */
   static void update() {
     hidScanInput();
-    m_keysHeld = hidKeysHeld();
-    m_keysDown = hidKeysDown();
+    m_keysHeld  = hidKeysHeld();
+    m_keysDown  = hidKeysDown();
+
+    m_direction = {static_cast<float>(isHeld(KEY_RIGHT) - isHeld(KEY_LEFT)),
+                   static_cast<float>(isHeld(KEY_DOWN) - isHeld(KEY_UP))};
+  };
+
+  static Vec2 direction() {
+    return m_direction;
   }
 
   /**
@@ -30,6 +39,8 @@ public:
   }
 
 private:
-  inline static u32 m_keysHeld = 0;
-  inline static u32 m_keysDown = 0;
+  inline static u32 m_keysHeld   = 0;
+  inline static u32 m_keysDown   = 0;
+
+  inline static Vec2 m_direction = {0.0f, 0.0f};
 };

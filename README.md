@@ -2,6 +2,18 @@
 
 Save your Christmas! Collect the Snowflakes
 
+## Architectural Notes
+
+```
+main
+ └── Engine
+      ├── Renderer
+      ├── InputManager
+      ├── Audio
+      └── Scene
+           └── Player
+```
+
 # Build Instructions
 
 Run
