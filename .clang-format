@@ -3,7 +3,7 @@
 Language: Cpp
 BasedOnStyle: LLVM
 IndentWidth: 2
-ColumnLimit: 100
+ColumnLimit: 120
 Standard: c++20
 AlignConsecutiveAssignments: AcrossEmptyLinesAndComments
 AlignConsecutiveDeclarations: None
@@ -15,6 +15,7 @@ AlignArrayOfStructures: Right
 BreakBeforeBinaryOperators: None
 BinPackArguments: false
 BinPackParameters: BinPack
+BreakBinaryOperations: RespectPrecedence
 SortIncludes:
   Enabled: true
-PointerAlignment: Left
+PointerAlignment: Right
