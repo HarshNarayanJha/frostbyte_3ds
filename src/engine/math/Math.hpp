@@ -12,6 +12,10 @@ struct Vec2 {
   Vec2()  = default;
   constexpr Vec2(float x, float y) : x(x), y(y) {}
 
+  Vec2 operator-() const {
+    return {-x, -y};
+  }
+
   Vec2 operator+(const Vec2 &other) const {
     return {x + other.x, y + other.y};
   }
@@ -35,6 +39,12 @@ struct Vec2 {
     return *this;
   }
 
+  Vec2 &operator-=(const Vec2 &other) {
+    x -= other.x;
+    y -= other.y;
+    return *this;
+  }
+
   Vec2 moveTowards(const Vec2 &target, float maxDistance) const {
     Vec2  direction = target - *this;
     float distance  = direction.len();
@@ -50,5 +60,21 @@ struct Vec2 {
 
   float lenSquared() const {
     return (x * x) + (y * y);
+  }
+
+  void normalize() {
+    float length = len();
+    if (length > 0.0f) {
+      x /= length;
+      y /= length;
+    }
+  }
+
+  Vec2 normalized() const {
+    float length = len();
+    if (length > 0.0f) {
+      return {x / length, y / length};
+    }
+    return {0.0f, 0.0f};
   }
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../math/Math.hpp"
+#include "../math/Rect.hpp"
 #include <citro2d.h>
 
 /**
@@ -36,9 +37,12 @@ public:
     C2D_DrawCircleSolid(pos.x, pos.y, z, radius, color);
   }
 
-  void drawHollowRect(const Vec2 &pos, const Vec2 &size, u32 colorTL, u32 colorTR, u32 colorBL, u32 colorBR,
+  void drawHollowRect(const Rect &rect, u32 colorT, u32 colorR, u32 colorB, u32 colorL, float thickness = 1.0f,
                       float z = 0.5f) {
-    C2D_DrawRectangle(pos.x, pos.y, z, size.x, size.y, colorTL, colorTR, colorBL, colorBR);
+    drawLine({rect.left(), rect.top()}, {rect.right(), rect.top()}, colorT, thickness, z);
+    drawLine({rect.right(), rect.top()}, {rect.right(), rect.bottom()}, colorR, thickness, z);
+    drawLine({rect.right(), rect.bottom()}, {rect.left(), rect.bottom()}, colorB, thickness, z);
+    drawLine({rect.left(), rect.bottom()}, {rect.left(), rect.top()}, colorL, thickness, z);
   }
 
   void drawHollowCircle(const Vec2 &pos, float radius, u32 colorTL, u32 colorTR, u32 colorBL, u32 colorBR,
@@ -53,5 +57,9 @@ public:
     Vec2  p3       = pos + Vec2(-halfSize, -halfSize);
 
     C2D_DrawTriangle(p1.x, p1.y, color, p2.x, p2.y, color, p3.x, p3.y, color, z);
+  }
+
+  void drawLine(const Vec2 &start, const Vec2 &end, u32 color, float thickness = 1.0f, float z = 0.5f) {
+    C2D_DrawLine(start.x, start.y, color, end.x, end.y, color, thickness, z);
   }
 };

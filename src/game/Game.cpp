@@ -23,6 +23,7 @@ Game::~Game() {
 void Game::update(float dt) {
   // update all
   m_player->update(dt);
+  m_player->collideWorldBoundary();
 
   for (auto &bk : m_blocks) {
     bk.update(dt);
@@ -32,17 +33,28 @@ void Game::update(float dt) {
     sf.update(dt);
   }
 
+  // TODO: Improve and check collisions with blocks failling within a certain threshold of player's bounding box
+  // Which is skewed towards player's velocity vector, for now, check with all of them.
+
   // check collisions with blocks
-  for (const auto &bk : m_blocks) {
-    if (Collision::checkAABB(m_player->getRect(), bk.getRect())) {
-      printf("Collision detected with block at (%f, %f)\n", bk.getRect().pos.x, bk.getRect().pos.y);
-      m_player->bounce();
+  for (auto &bk : m_blocks) {
+    Vec2  nearestPoint = Collision::getNearestPointOnRect(m_player->getPos(), bk.getRect());
+    Vec2  rayToNearest = nearestPoint - m_player->getPos();
+    float overlap      = m_player->getSize() - rayToNearest.len();
+
+    if (std::isnan(overlap))
+      overlap = 0.0f;
+
+    if (overlap > 0) {
+      m_player->applyDelta(-rayToNearest.normalized() * overlap);
+      m_player->bounce(bk.getRect(), nearestPoint);
+
+      bk.setLastCollisionPoint(nearestPoint);
     }
   }
 
   for (auto &sf : m_snowflakes) {
     if (Collision::checkAABB(m_player->getRect(), sf.getRect())) {
-      printf("Collision detected with snowflake at (%f, %f)\n", sf.getRect().pos.x, sf.getRect().pos.y);
       sf.consume();
     }
   }
@@ -61,6 +73,14 @@ void Game::draw() {
   // then draw the blocks
   for (auto &bk : m_blocks) {
     bk.draw(m_engine->getRenderer());
+
+    if (DEBUG_DRAW_COLLISION_NEAREST_POINT) {
+      Vec2 nearestPoint = Collision::getNearestPointOnRect(m_player->getPos(), bk.getRect());
+
+      C2D_DrawCircleSolid(nearestPoint.x, nearestPoint.y, 0.5f, 2.0f, clrGreen);
+      C2D_DrawLine(
+          m_player->getPos().x, m_player->getPos().y, clrRed, nearestPoint.x, nearestPoint.y, clrGreen, 1.0f, 0.5f);
+    }
   }
 
   // then draw the snowflakes

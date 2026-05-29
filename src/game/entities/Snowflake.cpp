@@ -11,6 +11,10 @@ void Snowflake::update(float dt) {}
 
 void Snowflake::draw(Renderer &renderer) {
   renderer.drawTriangle(m_pos, m_size, clrBlue);
+
+  if (DEBUG_DRAW_BBOX) {
+    renderer.drawHollowRect(getRect(), clrOrange, clrOrange, clrOrange, clrOrange);
+  }
 }
 
 void Snowflake::consume() {
@@ -19,7 +23,8 @@ void Snowflake::consume() {
 }
 
 Rect Snowflake::getRect() const {
+  Vec2 tl = m_pos - Vec2(m_size / 2.0f, m_size / 2.0f);
   return {
-      m_pos, {m_size, m_size}
+      tl, {m_size, m_size}
   };
 }

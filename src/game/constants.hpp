@@ -5,12 +5,16 @@
 #define APP_NAME "Frostbyte 3DS"
 #define SCREEN_WIDTH 400
 #define SCREEN_HEIGHT 240
-#define BORDER_WIDTH 2
 
 constexpr float SPEED            = 300.0f;
 constexpr float ACCELERATION     = 200.0f;
 constexpr float DECELERATION     = 50.0f;
 constexpr float GRAVITY_CONSTANT = 1000000.0f;
+
+#define DEBUG_DRAW_BBOX true
+#define DEBUG_DRAW_VELOCITY true
+#define DEBUG_DRAW_COLLISION_NEAREST_POINT false
+#define DEBUG_DRAW_COLLISION_HIT_POINT true
 
 /* Colors */
 const u32 clrClear  = C2D_Color32(0xFF, 0xFF, 0xFF, 0xFF);

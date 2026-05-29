@@ -12,13 +12,8 @@
 int main() {
   std::vector<Block> blocks;
 
-  // world boundary
-  blocks.emplace_back(0.0f, -10.0f, SCREEN_WIDTH, 10.0f);        // top
-  blocks.emplace_back(0.0f, SCREEN_HEIGHT, SCREEN_WIDTH, 10.0f); // bottom
-  blocks.emplace_back(-10.0f, 0.0f, 10.0f, SCREEN_HEIGHT);       // left
-  blocks.emplace_back(SCREEN_WIDTH, 0.0f, 10.0f, SCREEN_HEIGHT); // right
-
-  blocks.emplace_back(10.0f, 10.0f, 10.0f, 10.0f);
+  // two blocks for now
+  blocks.emplace_back((SCREEN_WIDTH / 2.0f) - 15.0f, (SCREEN_HEIGHT / 2.0f) - 25.0f, 30.0f, 50.0f);
   blocks.emplace_back(SCREEN_WIDTH - 80.0f, SCREEN_HEIGHT - 80.0f, 50.0f, 30.0f);
 
   std::vector<Snowflake> snowflakes;
@@ -29,7 +24,7 @@ int main() {
   const float dt             = 1.0f / 60.0f;
 
   std::unique_ptr<Game> game = std::make_unique<Game>(
-      Player{80.0f, SCREEN_HEIGHT / 2.0f, 15.0f, SPEED, ACCELERATION, DECELERATION, GRAVITY_CONSTANT},
+      Player{80.0f, SCREEN_HEIGHT / 2.0f, 5.0f, SPEED, ACCELERATION, DECELERATION, GRAVITY_CONSTANT},
       blocks,
       snowflakes);
   Engine &engine = game->getEngine();
