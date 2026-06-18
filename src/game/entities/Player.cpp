@@ -5,9 +5,12 @@
 
 #include "../../engine/math/Math.hpp"
 #include "../../engine/math/Rect.hpp"
+#include "../../engine/util/Logger.hpp"
 
 Player::Player(float x, float y, float size, float speed, float accel, float decel, float gravity)
-    : m_pos(x, y), m_size(size), m_vel(0, 0), m_speed(speed), m_accel(accel), m_decel(decel), m_gravity(gravity) {}
+    : m_pos(x, y), m_size(size), m_vel(0, 0), m_speed(speed), m_accel(accel), m_decel(decel), m_gravity(gravity) {
+  Logger::info("Player::Player init");
+}
 
 void Player::update(float dt) {
   Vec2 direction = InputManager::direction();
@@ -24,7 +27,6 @@ void Player::update(float dt) {
 }
 
 void Player::collideWorldBoundary() {
-
   if (getRect().left() < 0.0f) {
     m_pos.x = 0.0f + m_size;
     m_vel.x = -m_vel.x * m_bounciness;

@@ -2,25 +2,59 @@
 
 #include "../engine/core/Engine.hpp"
 #include "../engine/physics/Collision.hpp"
+#include "../engine/util/Logger.hpp"
 #include "entities/Block.hpp"
 #include "entities/Player.hpp"
 #include "entities/Snowflake.hpp"
 
 #include "constants.hpp"
 
-Game::Game(Player player, std::vector<Block> blocks, std::vector<Snowflake> snowflakes)
+Game::Game(GameState initial_state, Player player, std::vector<Block> blocks, std::vector<Snowflake> snowflakes)
     : m_blocks(blocks), m_snowflakes(snowflakes) {
+  Logger::info("Game::Game init");
+
   m_engine = std::make_unique<Engine>();
   m_engine->Init();
 
   m_player = std::make_unique<Player>(player);
+
+  changeState(initial_state);
 }
 
 Game::~Game() {
+  Logger::info("Game::~Game teardown");
+
   m_engine.reset();
 }
 
+void Game::changeState(GameState state) {
+  this->reset();
+
+  m_state = state;
+
+  switch (m_state) {
+  case GameState::MAIN_MENU:
+    Logger::info("Game::changeState state=MainMenu");
+    m_main_menu_screen = std::make_unique<MainMenuScreen>();
+    break;
+  case GameState::IN_LEVEL:
+    Logger::info("Game::changeState state=InLevel");
+    m_level_screen = std::make_unique<LevelScreen>();
+    break;
+  case GameState::RELOADING:
+    Logger::info("Game::changeState state=Reloading");
+    m_level_screen = std::make_unique<LevelScreen>();
+    break;
+  default:
+    Logger::error("Unhandled GameState %d\n", static_cast<int>(m_state));
+    svcBreak(UserBreakType::USERBREAK_ASSERT);
+    break;
+  }
+}
+
 void Game::update(float dt) {
+  Logger::trace("Game::update dt=%.4f", dt);
+
   // update all
   m_player->update(dt);
   m_player->collideWorldBoundary();
@@ -61,6 +95,8 @@ void Game::update(float dt) {
 }
 
 void Game::draw() {
+  Logger::trace("Game::draw");
+
   // Render Top Screen Geometry
   // TODO: Move to Renderer
   C2D_TargetClear(m_engine->getRenderer().getTopScreen(), clrWhite); // Clear screen to White
@@ -91,4 +127,17 @@ void Game::draw() {
   // Render Bottom Screen UI (not yet, it's console for now)
   // C2D_TargetClear(bottom, C2D_Color32(240, 240, 240, 255));
   // C2D_SceneBegin(bottom);
+}
+
+void Game::reset() {
+  Logger::trace("Game::reset");
+
+  // Reset entities
+  m_player.reset();
+  m_blocks.clear();
+  m_snowflakes.clear();
+
+  // Reset screens
+  m_main_menu_screen.reset();
+  m_level_screen.reset();
 }

@@ -1,37 +1,55 @@
 #include "Renderer.hpp"
+#include "../util/Logger.hpp"
 
 Renderer::Renderer() = default;
 
 bool Renderer::Init(Renderer::InitMode mode) {
-  // inti renderer somehow
+  Logger::info("Renderer::Init");
+
+  // init renderer somehow
   gfxInitDefault();
 
   if (!C3D_Init(C3D_DEFAULT_CMDBUF_SIZE)) {
+    Logger::error("C3D_Init failed");
+    gfxExit();
     return false;
   }
   if (!C2D_Init(C2D_DEFAULT_MAX_OBJECTS)) {
+    Logger::error("C2D_Init failed");
+    C3D_Fini();
+    gfxExit();
     return false;
   }
   C2D_Prepare();
 
   switch (mode) {
-  case CONSOLE_TOP:
-    consoleInit(GFX_TOP, nullptr);
+  case InitMode::CONSOLE_TOP:
+    Logger::info("Renderer InitMode::CONSOLE_TOP");
+
+    static PrintConsole topTextConsole;
+    consoleInit(GFX_TOP, &topTextConsole);
+    consoleSelect(&topTextConsole);
 
     m_topScreen    = nullptr;
     m_bottomScreen = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
     break;
 
-  case CONSOLE_BOTTOM:
+  case InitMode::CONSOLE_BOTTOM:
+    Logger::info("Renderer InitMode::CONSOLE_BOTTOM");
+
     m_topScreen    = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
     m_bottomScreen = nullptr;
 
-    // Initialize console on bottom screen. Using NULL as the second argument tells the console
-    // library to use the internal console structure as current one
-    consoleInit(GFX_BOTTOM, nullptr);
+    // Initialize console on bottom screen. Using NULL as the second argument tells the console library to use the
+    // internal console structure as current one. Pass a PrintConsole to use it instead.
+    static PrintConsole bottomTextConsole;
+    consoleInit(GFX_BOTTOM, &bottomTextConsole);
+    consoleSelect(&bottomTextConsole);
     break;
 
-  case CONSOLE_NONE:
+  case InitMode::CONSOLE_NONE:
+    Logger::info("Renderer InitMode::CONSOLE_NONE");
+
     m_topScreen    = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
     m_bottomScreen = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
     break;
@@ -41,6 +59,8 @@ bool Renderer::Init(Renderer::InitMode mode) {
 }
 
 Renderer::~Renderer() {
+  Logger::info("Renderer::~Renderer teardown");
+
   C2D_Fini();
   C3D_Fini();
   gfxExit();

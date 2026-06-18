@@ -16,7 +16,7 @@ public:
   Renderer();
   ~Renderer();
 
-  enum InitMode : u8 { CONSOLE_TOP, CONSOLE_BOTTOM, CONSOLE_NONE };
+  enum class InitMode : u8 { CONSOLE_TOP, CONSOLE_BOTTOM, CONSOLE_NONE };
   bool Init(InitMode mode);
 
   C3D_RenderTarget *getTopScreen() const {

@@ -1,5 +1,6 @@
 #include "engine/core/Engine.hpp"
 #include "engine/input/InputManager.hpp"
+#include "engine/util/Logger.hpp"
 
 #include "game/Game.hpp"
 #include "game/constants.hpp"
@@ -10,6 +11,9 @@
 #include <memory>
 
 int main() {
+  Logger::setLevel(Logger::LogLevel::DEBUG);
+  Logger::debug("main application boot");
+
   std::vector<Block> blocks;
 
   // two blocks for now
@@ -24,6 +28,7 @@ int main() {
   const float dt             = 1.0f / 60.0f;
 
   std::unique_ptr<Game> game = std::make_unique<Game>(
+      GameState::MAIN_MENU,
       Player{80.0f, SCREEN_HEIGHT / 2.0f, 5.0f, SPEED, ACCELERATION, DECELERATION, GRAVITY_CONSTANT},
       blocks,
       snowflakes);
@@ -32,6 +37,7 @@ int main() {
   while (engine.isRunning()) {
     engine.update();
     if (InputManager::isDown(KEY_START)) {
+      Logger::info("Exiting application");
       break;
     }
 

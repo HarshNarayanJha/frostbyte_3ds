@@ -2,10 +2,12 @@
 #include "../../game/constants.hpp"
 #include "../graphics/Renderer.hpp"
 #include "../input/InputManager.hpp"
+#include "../util/Logger.hpp"
 
 Engine::Engine() = default;
 
 bool Engine::Init() {
+  Logger::info("Engine::Init");
   romfsInit();
   aptInit();
 
@@ -18,13 +20,15 @@ bool Engine::Init() {
   // The top screen has 30 rows and 50 columns
   // The bottom screen has 30 rows and 40 columns
   printf("\x1b[8;15HHello World!");
-  printf("\x1b[11;10HThis is a %s", APP_NAME);
+  printf("\x1b[11;10HThis is %s", APP_NAME);
   printf("\x1b[15;12HPress Start to exit.");
 
   return true;
 }
 
 Engine::~Engine() {
+  Logger::info("Engine::~Engine teardown");
+
   // Graceful hardware shutdown order
   //
   // destroy the renderer
@@ -41,6 +45,8 @@ bool Engine::isRunning() const {
 }
 
 void Engine::update() {
+  Logger::trace("Engine::update");
+
   // Read input registers
   InputManager::update();
 }
