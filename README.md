@@ -25,7 +25,7 @@ Game
         └─ Snowflakes[]
 ```
 
-# Build Instructions
+## Build Instructions
 
 Run
 
@@ -50,3 +50,8 @@ and logging libraries, wrapping citro2d, citro3d and libctru libraries.
 
 The logging system in `src/engine/util/logger.hpp` logs directly to the debugger console using `svcOutputDebugString`
 syscall. This makes the bottom screen or any other printconsole device available for `printf`-ing.
+
+
+## Disclaimer
+
+This project is an unofficial Nintendo 3DS homebrew application and is not affiliated with, endorsed by, or associated with Nintendo in any way.
