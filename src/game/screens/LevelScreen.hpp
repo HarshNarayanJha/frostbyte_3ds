@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../data/LevelData.hpp"
 #include "../entities/Block.hpp"
 #include "../entities/Player.hpp"
 #include "../entities/Snowflake.hpp"
@@ -9,13 +10,14 @@
 
 class LevelScreen : public Screen {
 public:
-  LevelScreen();
+  LevelScreen(const LevelData &levelData);
   ~LevelScreen() override;
 
-  GameState update(float dt) override;
-  void      draw(Renderer &renderer) override;
+  StateRequest update(float dt) override;
+  void         draw(Renderer &renderer) override;
 
 private:
+  int                     m_currentLevelId;
   std::unique_ptr<Player> m_player;
   std::vector<Block>      m_blocks;
   std::vector<Snowflake>  m_snowflakes;

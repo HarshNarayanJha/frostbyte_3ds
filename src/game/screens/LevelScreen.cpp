@@ -4,32 +4,56 @@
 #include "../../engine/physics/Collision.hpp"
 #include "../../engine/util/Logger.hpp"
 #include "../constants.hpp"
+#include "../data/LevelData.hpp"
 #include <3ds/services/hid.h>
 
-LevelScreen::LevelScreen() {
-  Logger::info("LevelScreen::LevelScreen init");
+LevelScreen::LevelScreen(const LevelData &levelData) : m_currentLevelId(levelData.levelId) {
+  Logger::info("LevelScreen::LevelScreen init levelId: %d", m_currentLevelId);
 
-  m_player =
-      std::make_unique<Player>(80.0f, SCREEN_HEIGHT / 2.0f, 5.0f, SPEED, ACCELERATION, DECELERATION, GRAVITY_CONSTANT);
+  m_player = std::make_unique<Player>(levelData.playerSpawn.x,
+                                      levelData.playerSpawn.y,
+                                      PLAYER_RADIUS,
+                                      SPEED,
+                                      ACCELERATION,
+                                      DECELERATION,
+                                      GRAVITY_CONSTANT);
 
-  m_blocks.emplace_back((SCREEN_WIDTH / 2.0f) - 15.0f, (SCREEN_HEIGHT / 2.0f) - 25.0f, 30.0f, 50.0f);
-  m_blocks.emplace_back(SCREEN_WIDTH - 80.0f, SCREEN_HEIGHT - 80.0f, 50.0f, 30.0f);
+  m_blocks.reserve(levelData.blocks.size());
+  for (const auto &blockData : levelData.blocks) {
+    m_blocks.emplace_back(blockData.x, blockData.y, blockData.width, blockData.height);
+  }
 
-  m_snowflakes.emplace_back(45.0f, 45.0f, 5.0f);
-  m_snowflakes.emplace_back(SCREEN_WIDTH - 45.0f, SCREEN_HEIGHT - 45.0f, 5.0f);
+  m_snowflakes.reserve(levelData.snowflakes.size());
+  for (const auto &snowflakeData : levelData.snowflakes) {
+    m_snowflakes.emplace_back(snowflakeData.x, snowflakeData.y, snowflakeData.size);
+  }
 }
 
 LevelScreen::~LevelScreen() {
   Logger::info("LevelScreen::~LevelScreen teardown");
 }
 
-GameState LevelScreen::update(float dt) {
+StateRequest LevelScreen::update(float dt) {
   Logger::trace("LevelScreen::update");
+
+  // handle reload
+  if (InputManager::isDown(KEY_X)) {
+    Logger::debug("KEY_X Pressed in Level. Reloading current level.");
+    return {GameState::LEVEL, m_currentLevelId};
+  }
 
   // back to main on START or SELECT press.
   // TODO: add pause menu
   if (InputManager::isDown(KEY_START) || InputManager::isDown(KEY_SELECT)) {
-    return GameState::MAIN_MENU;
+    Logger::debug("KEY_START or KEY_SELECT Pressed in Level. Returning to main menu.");
+    return {GameState::MAIN_MENU};
+  }
+
+  // Progress level on press A
+  // TODO: Check actual level progress logic
+  if (InputManager::isDown(KEY_A)) {
+    Logger::debug("KEY_A Pressed in Level. Progressing to next level.");
+    return {GameState::LEVEL, m_currentLevelId + 1};
   }
 
   m_player->update(dt);
@@ -66,7 +90,7 @@ GameState LevelScreen::update(float dt) {
     }
   }
 
-  return GameState::NONE;
+  return {};
 }
 
 void LevelScreen::draw(Renderer &renderer) {

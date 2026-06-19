@@ -9,8 +9,8 @@ public:
   MainMenuScreen();
   ~MainMenuScreen() override;
 
-  GameState update(float dt) override;
-  void      draw(Renderer &renderer) override;
+  StateRequest update(float dt) override;
+  void         draw(Renderer &renderer) override;
 
 private:
   Rect toprect  = {Vec2((SCREEN_WIDTH / 2.0f) - 60.0f, SCREEN_HEIGHT / 6.0f), Vec2(120, 60)};

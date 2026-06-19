@@ -3,9 +3,11 @@
 #include <citro2d.h>
 
 #define APP_NAME "Frostbyte 3DS"
-#define SCREEN_WIDTH 400
-#define SCREEN_HEIGHT 240
 
+constexpr float SCREEN_WIDTH     = 400.0f;
+constexpr float SCREEN_HEIGHT    = 240.0f;
+
+constexpr float PLAYER_RADIUS    = 5.0f;
 constexpr float SPEED            = 300.0f;
 constexpr float ACCELERATION     = 200.0f;
 constexpr float DECELERATION     = 50.0f;

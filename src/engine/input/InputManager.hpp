@@ -3,6 +3,7 @@
 #include "../math/Math.hpp"
 
 #include <3ds.h>
+#include <citro2d.h>
 
 /**
  * InputManager handles input state and provides methods for querying input state.
@@ -10,15 +11,37 @@
 class InputManager {
 public:
   /**
-   * Scans for input and updates the state. Call once every frame.
+   * Scans for input and updates the direction. Call once every frame.
    */
   static void update() {
     hidScanInput();
-    m_keysHeld  = hidKeysHeld();
-    m_keysDown  = hidKeysDown();
+    m_keysHeld = hidKeysHeld();
+    m_keysDown = hidKeysDown();
 
-    m_direction = {static_cast<float>(isHeld(KEY_RIGHT) - isHeld(KEY_LEFT)),
-                   static_cast<float>(isHeld(KEY_DOWN) - isHeld(KEY_UP))};
+    // dpad
+    float dX = static_cast<float>(isHeld(KEY_DRIGHT) - isHeld(KEY_DLEFT));
+    float dY = static_cast<float>(isHeld(KEY_DDOWN) - isHeld(KEY_DUP));
+
+    // cpad
+    circlePosition cpad;
+    hidCircleRead(&cpad);
+
+    float cX = C2D_Clamp(cpad.dx / 150.0f, -1.0f, 1.0f);
+    float cY = C2D_Clamp(-cpad.dy / 150.0f, -1.0f, 1.0f);
+
+    // deadzone
+    if (std::abs(cX) < 0.1f)
+      cX = 0.0f;
+    if (std::abs(cY) < 0.1f)
+      cY = 0.0f;
+
+    Vec2  combined(dX + cX, dY + cY);
+    float len = combined.len();
+    if (len > 1.0f) {
+      combined.normalize();
+    }
+
+    m_direction = combined;
   };
 
   static Vec2 direction() {

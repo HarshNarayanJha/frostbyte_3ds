@@ -21,7 +21,7 @@ bool Engine::Init() {
   // The bottom screen has 30 rows and 40 columns
   printf("\x1b[8;15HHello World!");
   printf("\x1b[11;10HThis is %s", APP_NAME);
-  printf("\x1b[15;12HPress Start to exit.");
+  printf("\x1b[15;12HPress Select to exit.");
 
   return true;
 }

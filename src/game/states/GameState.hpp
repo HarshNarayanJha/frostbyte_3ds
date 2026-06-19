@@ -7,3 +7,12 @@ enum class GameState : u8 {
   MAIN_MENU, // in main menu
   LEVEL,     // transition to some level
 };
+
+struct StateRequest {
+  GameState state = GameState::NONE;
+  int       data  = 0; // optional data, otherwise 0
+
+  StateRequest()  = default;
+  StateRequest(GameState s) : state(s) {}
+  StateRequest(GameState s, int d) : state(s), data(d) {}
+};

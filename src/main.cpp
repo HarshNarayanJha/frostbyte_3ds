@@ -1,8 +1,9 @@
 #include "engine/core/Engine.hpp"
-// #include "engine/input/InputManager.hpp"
+#include "engine/input/InputManager.hpp"
 #include "engine/util/Logger.hpp"
 
 #include "game/Game.hpp"
+#include "game/states/GameState.hpp"
 
 int main() {
   Logger::setLevel(Logger::LogLevel::DEBUG);
@@ -17,10 +18,13 @@ int main() {
   while (engine.isRunning()) {
     // engine must be updated first
     engine.update();
-    // if (InputManager::isDown(KEY_START)) {
-    //   Logger::info("Exiting application");
-    //   break;
-    // }
+
+    if (game.getState() == GameState::MAIN_MENU) {
+      if (InputManager::isDown(KEY_START)) {
+        Logger::info("Exiting application");
+        break;
+      }
+    }
 
     // first update then draw
     game.update(dt);

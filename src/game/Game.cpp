@@ -3,8 +3,10 @@
 #include "../engine/core/Engine.hpp"
 #include "../engine/util/Logger.hpp"
 #include "constants.hpp"
+#include "data/LevelRegistry.hpp"
 #include "screens/LevelScreen.hpp"
 #include "screens/MainMenuScreen.hpp"
+#include "states/GameState.hpp"
 
 #include <3ds.h>
 #include <memory>
@@ -15,32 +17,34 @@ Game::Game() {
   m_engine = std::make_unique<Engine>();
   m_engine->Init();
 
-  changeState(GameState::MAIN_MENU);
+  changeState({GameState::MAIN_MENU});
 }
 
 Game::~Game() {
   Logger::info("Game::~Game teardown");
 }
 
-void Game::changeState(GameState state) {
-  Logger::trace("Game::changeState %d", static_cast<int>(state));
+void Game::changeState(StateRequest request) {
+  Logger::trace("Game::changeState %d with data=%d", static_cast<int>(request.state), request.data);
 
-  switch (state) {
+  switch (request.state) {
   case GameState::MAIN_MENU:
     Logger::info("Game::changeState state=MainMenu");
     m_activeScreen = std::make_unique<MainMenuScreen>();
     break;
 
   case GameState::LEVEL:
-    Logger::info("Game::changeState state=InLevel");
-    m_activeScreen = std::make_unique<LevelScreen>();
+    Logger::info("Game::changeState state=InLevel data=%d", request.data);
+    m_activeScreen = std::make_unique<LevelScreen>(LevelRegistry::getLevel(request.data));
     break;
 
   default:
-    Logger::error("Unhandled GameState %d", static_cast<int>(state));
+    Logger::error("Unhandled GameState %d", static_cast<int>(request.state));
     svcBreak(UserBreakType::USERBREAK_ASSERT);
     break;
   }
+
+  m_state = request.state;
 }
 
 void Game::update(float dt) {
@@ -48,8 +52,8 @@ void Game::update(float dt) {
     return;
   Logger::trace("Game::update dt=%.4f", dt);
 
-  GameState requestedState = m_activeScreen->update(dt);
-  if (requestedState != GameState::NONE) {
+  StateRequest requestedState = m_activeScreen->update(dt);
+  if (requestedState.state != GameState::NONE) {
     changeState(requestedState);
   }
 }

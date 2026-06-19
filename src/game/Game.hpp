@@ -11,7 +11,11 @@ public:
   Game();
   ~Game();
 
-  void changeState(GameState state);
+  GameState getState() const {
+    return m_state;
+  }
+
+  void changeState(StateRequest state);
 
   Engine &getEngine() {
     return *m_engine;
@@ -21,6 +25,7 @@ public:
   void draw();
 
 private:
+  GameState               m_state;
   std::unique_ptr<Engine> m_engine;
 
   std::unique_ptr<Screen> m_activeScreen;

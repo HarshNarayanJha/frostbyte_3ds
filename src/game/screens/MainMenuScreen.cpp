@@ -15,15 +15,15 @@ MainMenuScreen::~MainMenuScreen() {
   Logger::info("MainMenuScreen::~MainMenuScreen teardown");
 }
 
-GameState MainMenuScreen::update(float dt) {
+StateRequest MainMenuScreen::update(float dt) {
   // listen to clicks on rects and change state
   if (InputManager::isDown(KEY_A)) {
     // change state to level
-    Logger::info("KEY_A pressed on MainMenuScreen");
-    return GameState::LEVEL;
+    Logger::debug("KEY_A pressed on MainMenuScreen. Progressing to level 1.");
+    return {GameState::LEVEL, 1};
   }
 
-  return GameState::NONE;
+  return {};
 }
 
 void MainMenuScreen::draw(Renderer &renderer) {
