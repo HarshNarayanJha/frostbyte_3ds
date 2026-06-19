@@ -2,16 +2,27 @@
 
 Save your Christmas! Collect the Snowflakes
 
+## About
+
+Frostbyte 3DS is a port of my game [Frostbyte](https://harshnarayanjha.itch.io/frostbyte) to the Nintendo 3DS.
+
 ## Architectural Notes
 
 ```
-main
- └── Engine
-      ├── Renderer
-      ├── InputManager
-      ├── Audio
-      └── Scene
-           └── Player
+main.cpp
+Game
+  ├─ Engine (init, update, input polling)
+  │  ├─ Math (Vec and Rect)
+  │  ├─ Physics (Collison)
+  │  ├─ Renderer (Citro2D graphics)
+  │  └─ InputManager (static key state)
+  │
+  └─ Screen
+     ├─ MainMenuScreen
+     └─ LevelScreen
+        ├─ Player
+        ├─ Blocks[]
+        └─ Snowflakes[]
 ```
 
 # Build Instructions
@@ -38,4 +49,4 @@ and logging libraries, wrapping citro2d, citro3d and libctru libraries.
 ### Logging
 
 The logging system in `src/engine/util/logger.hpp` logs directly to the debugger console using `svcOutputDebugString`
-syscall. This makes the bottom screen or any other console available for `printf`-ing.
+syscall. This makes the bottom screen or any other printconsole device available for `printf`-ing.

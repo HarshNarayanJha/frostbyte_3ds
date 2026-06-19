@@ -60,7 +60,7 @@ public:
   static LevelData getLevel(int id) {
     Logger::debug("LevelRegistry::getLevel id=%d", id);
 
-    if (id <= 0 || id > levels.size()) {
+    if (id <= 0 || id > static_cast<int>(levels.size())) {
       Logger::error("LevelRegistry::getLevel id=%d is out of bounds. Returning last level", id);
       return levels.at(levels.size()); // safe since levelIds start from 1
     }
