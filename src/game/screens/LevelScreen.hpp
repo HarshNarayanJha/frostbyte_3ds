@@ -1,17 +1,22 @@
 #pragma once
 
-#include "../../engine/util/Logger.hpp"
+#include "../entities/Block.hpp"
+#include "../entities/Player.hpp"
+#include "../entities/Snowflake.hpp"
+#include "../states/Screen.hpp"
+#include <memory>
+#include <vector>
 
-class LevelScreen {
+class LevelScreen : public Screen {
 public:
-  LevelScreen() {
-    Logger::info("LevelScreen::LevelScreen init");
-  };
+  LevelScreen();
+  ~LevelScreen() override;
 
-  ~LevelScreen() {
-    Logger::info("LevelScreen::~LevelScreen teardown");
-  };
+  GameState update(float dt) override;
+  void      draw(Renderer &renderer) override;
 
-  void update();
-  void draw();
+private:
+  std::unique_ptr<Player> m_player;
+  std::vector<Block>      m_blocks;
+  std::vector<Snowflake>  m_snowflakes;
 };

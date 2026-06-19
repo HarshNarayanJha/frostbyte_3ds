@@ -1,17 +1,19 @@
 #pragma once
 
-#include "../../engine/util/Logger.hpp"
+#include "../../engine/math/Rect.hpp"
+#include "../constants.hpp"
+#include "../states/Screen.hpp"
 
-class MainMenuScreen {
+class MainMenuScreen : public Screen {
 public:
-  MainMenuScreen() {
-    Logger::info("MainMenuScreen::MainMenuScreen init");
-  };
+  MainMenuScreen();
+  ~MainMenuScreen() override;
 
-  ~MainMenuScreen() {
-    Logger::info("MainMenuScreen::~MainMenuScreen teardown");
-  };
+  GameState update(float dt) override;
+  void      draw(Renderer &renderer) override;
 
-  void update();
-  void draw();
+private:
+  Rect toprect  = {Vec2((SCREEN_WIDTH / 2.0f) - 60.0f, SCREEN_HEIGHT / 6.0f), Vec2(120, 60)};
+  Rect playRect = {Vec2((SCREEN_WIDTH / 2.0f) - 30.0f, SCREEN_HEIGHT / 2.0f), Vec2(60, 25)};
+  Rect exitRect = {Vec2((SCREEN_WIDTH / 2.0f) - 30.0f, SCREEN_HEIGHT / 1.5f), Vec2(60, 25)};
 };

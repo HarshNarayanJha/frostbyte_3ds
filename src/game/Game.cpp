@@ -1,96 +1,56 @@
 #include "Game.hpp"
 
 #include "../engine/core/Engine.hpp"
-#include "../engine/physics/Collision.hpp"
 #include "../engine/util/Logger.hpp"
-#include "entities/Block.hpp"
-#include "entities/Player.hpp"
-#include "entities/Snowflake.hpp"
-
 #include "constants.hpp"
+#include "screens/LevelScreen.hpp"
+#include "screens/MainMenuScreen.hpp"
 
-Game::Game(GameState initial_state, Player player, std::vector<Block> blocks, std::vector<Snowflake> snowflakes)
-    : m_blocks(blocks), m_snowflakes(snowflakes) {
+#include <3ds.h>
+#include <memory>
+
+Game::Game() {
   Logger::info("Game::Game init");
 
   m_engine = std::make_unique<Engine>();
   m_engine->Init();
 
-  m_player = std::make_unique<Player>(player);
-
-  changeState(initial_state);
+  changeState(GameState::MAIN_MENU);
 }
 
 Game::~Game() {
   Logger::info("Game::~Game teardown");
-
-  m_engine.reset();
 }
 
 void Game::changeState(GameState state) {
-  this->reset();
+  Logger::trace("Game::changeState %d", static_cast<int>(state));
 
-  m_state = state;
-
-  switch (m_state) {
+  switch (state) {
   case GameState::MAIN_MENU:
     Logger::info("Game::changeState state=MainMenu");
-    m_main_menu_screen = std::make_unique<MainMenuScreen>();
+    m_activeScreen = std::make_unique<MainMenuScreen>();
     break;
-  case GameState::IN_LEVEL:
+
+  case GameState::LEVEL:
     Logger::info("Game::changeState state=InLevel");
-    m_level_screen = std::make_unique<LevelScreen>();
+    m_activeScreen = std::make_unique<LevelScreen>();
     break;
-  case GameState::RELOADING:
-    Logger::info("Game::changeState state=Reloading");
-    m_level_screen = std::make_unique<LevelScreen>();
-    break;
+
   default:
-    Logger::error("Unhandled GameState %d\n", static_cast<int>(m_state));
+    Logger::error("Unhandled GameState %d", static_cast<int>(state));
     svcBreak(UserBreakType::USERBREAK_ASSERT);
     break;
   }
 }
 
 void Game::update(float dt) {
+  if (!m_activeScreen)
+    return;
   Logger::trace("Game::update dt=%.4f", dt);
 
-  // update all
-  m_player->update(dt);
-  m_player->collideWorldBoundary();
-
-  for (auto &bk : m_blocks) {
-    bk.update(dt);
-  }
-
-  for (auto &sf : m_snowflakes) {
-    sf.update(dt);
-  }
-
-  // TODO: Improve and check collisions with blocks failling within a certain threshold of player's bounding box
-  // Which is skewed towards player's velocity vector, for now, check with all of them.
-
-  // check collisions with blocks
-  for (auto &bk : m_blocks) {
-    Vec2  nearestPoint = Collision::getNearestPointOnRect(m_player->getPos(), bk.getRect());
-    Vec2  rayToNearest = nearestPoint - m_player->getPos();
-    float overlap      = m_player->getSize() - rayToNearest.len();
-
-    if (std::isnan(overlap))
-      overlap = 0.0f;
-
-    if (overlap > 0) {
-      m_player->applyDelta(-rayToNearest.normalized() * overlap);
-      m_player->bounce(bk.getRect(), nearestPoint);
-
-      bk.setLastCollisionPoint(nearestPoint);
-    }
-  }
-
-  for (auto &sf : m_snowflakes) {
-    if (Collision::checkAABB(m_player->getRect(), sf.getRect())) {
-      sf.consume();
-    }
+  GameState requestedState = m_activeScreen->update(dt);
+  if (requestedState != GameState::NONE) {
+    changeState(requestedState);
   }
 }
 
@@ -98,46 +58,10 @@ void Game::draw() {
   Logger::trace("Game::draw");
 
   // Render Top Screen Geometry
-  // TODO: Move to Renderer
-  C2D_TargetClear(m_engine->getRenderer().getTopScreen(), clrWhite); // Clear screen to White
+  C2D_TargetClear(m_engine->getRenderer().getTopScreen(), clrClear);
   C2D_SceneBegin(m_engine->getRenderer().getTopScreen());
 
-  // draw the player first, otherwise it won't show up, due to some reason
-  // even though the examples say otherwise, circles must be drawn last
-  m_player->draw(m_engine->getRenderer());
-
-  // then draw the blocks
-  for (auto &bk : m_blocks) {
-    bk.draw(m_engine->getRenderer());
-
-    if (DEBUG_DRAW_COLLISION_NEAREST_POINT) {
-      Vec2 nearestPoint = Collision::getNearestPointOnRect(m_player->getPos(), bk.getRect());
-
-      C2D_DrawCircleSolid(nearestPoint.x, nearestPoint.y, 0.5f, 2.0f, clrGreen);
-      C2D_DrawLine(
-          m_player->getPos().x, m_player->getPos().y, clrRed, nearestPoint.x, nearestPoint.y, clrGreen, 1.0f, 0.5f);
-    }
+  if (m_activeScreen) {
+    m_activeScreen->draw(m_engine->getRenderer());
   }
-
-  // then draw the snowflakes
-  for (auto &sf : m_snowflakes) {
-    sf.draw(m_engine->getRenderer());
-  }
-
-  // Render Bottom Screen UI (not yet, it's console for now)
-  // C2D_TargetClear(bottom, C2D_Color32(240, 240, 240, 255));
-  // C2D_SceneBegin(bottom);
-}
-
-void Game::reset() {
-  Logger::trace("Game::reset");
-
-  // Reset entities
-  m_player.reset();
-  m_blocks.clear();
-  m_snowflakes.clear();
-
-  // Reset screens
-  m_main_menu_screen.reset();
-  m_level_screen.reset();
 }
