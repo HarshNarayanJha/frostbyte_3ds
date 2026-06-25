@@ -101,8 +101,6 @@ StateRequest LevelScreen::update(float dt) {
 }
 
 void LevelScreen::draw(Renderer &renderer) {
-  renderer.clear(renderer.getTopScreen(), clrWhite);
-
   m_player->draw(renderer);
 
   for (auto &bk : m_blocks) {

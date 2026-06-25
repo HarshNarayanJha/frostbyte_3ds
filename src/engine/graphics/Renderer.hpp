@@ -33,6 +33,12 @@ public:
     C2D_TargetClear(target, color);
   }
 
+  void drawFade(u32 color) {
+    // TODO, make them screen width and height properly
+    // even better move this to the engine.
+    drawRect({0.0f, 0.0f}, {400.0f, 240.0f}, color, 1.0f);
+  }
+
   void drawRect(const Vec2 &pos, const Vec2 &size, u32 color, float z = 0.5f) {
     C2D_DrawRectSolid(pos.x, pos.y, z, size.x, size.y, color);
   }

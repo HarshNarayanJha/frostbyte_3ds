@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../constants.hpp"
 #include "../data/LevelData.hpp"
 #include "../entities/Block.hpp"
 #include "../entities/Player.hpp"
@@ -15,6 +16,10 @@ public:
 
   StateRequest update(float dt) override;
   void         draw(Renderer &renderer) override;
+
+  u32 getClearColor() const override {
+    return clrWhite;
+  }
 
 private:
   int                     m_currentLevelId;
