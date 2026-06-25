@@ -39,7 +39,7 @@ void Game::changeState(StateRequest request) {
     break;
 
   default:
-    Logger::error("Unhandled GameState %d", static_cast<int>(request.state));
+    Logger::error("Game::changeState: Unhandled GameState %d", static_cast<int>(request.state));
     svcBreak(UserBreakType::USERBREAK_ASSERT);
     break;
   }
@@ -62,7 +62,7 @@ void Game::draw() {
   Logger::trace("Game::draw");
 
   // Render Top Screen Geometry
-  C2D_TargetClear(m_engine->getRenderer().getTopScreen(), clrClear);
+  m_engine->getRenderer().clear(m_engine->getRenderer().getTopScreen(), clrClear);
   C2D_SceneBegin(m_engine->getRenderer().getTopScreen());
 
   if (m_activeScreen) {

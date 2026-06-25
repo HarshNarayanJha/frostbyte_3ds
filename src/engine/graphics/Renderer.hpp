@@ -29,6 +29,10 @@ public:
   void prepareFrame();
   void finishFrame();
 
+  void clear(C3D_RenderTarget *target, u32 color) {
+    C2D_TargetClear(target, color);
+  }
+
   void drawRect(const Vec2 &pos, const Vec2 &size, u32 color, float z = 0.5f) {
     C2D_DrawRectSolid(pos.x, pos.y, z, size.x, size.y, color);
   }

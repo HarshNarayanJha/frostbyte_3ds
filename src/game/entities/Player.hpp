@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../../engine/math/Math.hpp"
+#include "effects/DieEffect.hpp"
+#include <memory>
 
 struct Rect;
 class Renderer;
@@ -14,8 +16,15 @@ private:
   float m_accel;
   float m_decel;
   float m_gravity;
+  bool  m_damaged    = false;
+  bool  m_died       = false;
 
   float m_bounciness = 0.8f;
+
+  /* consts */
+  constexpr static float DIE_ANIMATION_DURATION_SECONDS = 0.6f;
+
+  std::unique_ptr<DieEffect> m_dieEffect;
 
 public:
   Player(float x, float y, float size, float speed, float accel, float decel, float gravity);
@@ -49,8 +58,15 @@ public:
    */
   void applyDelta(Vec2 delta);
 
+  /**
+   * Damages the player. As this game has no health, starts the player death process.
+   */
+  void damage();
+
   Vec2  getPos() const;
   Vec2  getVel() const;
   Rect  getRect() const;
   float getSize() const;
+  bool  isDead() const;
+  bool  isDamaged() const;
 };

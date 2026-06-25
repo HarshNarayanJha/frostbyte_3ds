@@ -5,7 +5,6 @@
 #include "../../engine/util/Logger.hpp"
 #include "../constants.hpp"
 #include "../data/LevelData.hpp"
-#include <3ds/services/hid.h>
 
 LevelScreen::LevelScreen(const LevelData &levelData) : m_currentLevelId(levelData.levelId) {
   Logger::info("LevelScreen::LevelScreen init levelId: %d", m_currentLevelId);
@@ -56,6 +55,11 @@ StateRequest LevelScreen::update(float dt) {
     return {GameState::LEVEL, m_currentLevelId + 1};
   }
 
+  if (m_player->isDead()) {
+    Logger::debug("LevelScreen::update: Player died. Returning DIE state.");
+    return {GameState::LEVEL, m_currentLevelId};
+  }
+
   m_player->update(dt);
   m_player->collideWorldBoundary();
 
@@ -67,26 +71,29 @@ StateRequest LevelScreen::update(float dt) {
     sf.update(dt);
   }
 
-  // Check collisions with blocks
-  for (auto &bk : m_blocks) {
-    Vec2  nearestPoint = Collision::getNearestPointOnRect(m_player->getPos(), bk.getRect());
-    Vec2  rayToNearest = nearestPoint - m_player->getPos();
-    float overlap      = m_player->getSize() - rayToNearest.len();
+  if (!m_player->isDamaged()) {
+    // Check collisions with blocks
+    for (auto &bk : m_blocks) {
+      Vec2  nearestPoint = Collision::getNearestPointOnRect(m_player->getPos(), bk.getRect());
+      Vec2  rayToNearest = nearestPoint - m_player->getPos();
+      float overlap      = m_player->getSize() - rayToNearest.len();
 
-    if (std::isnan(overlap))
-      overlap = 0.0f;
+      if (std::isnan(overlap))
+        overlap = 0.0f;
 
-    if (overlap > 0) {
-      m_player->applyDelta(-rayToNearest.normalized() * overlap);
-      m_player->bounce(bk.getRect(), nearestPoint);
+      if (overlap > 0) {
+        Logger::debug("Collision detected with block. Overlap: %.4f. Calling .damage() on player.", overlap);
+        m_player->damage();
 
-      bk.setLastCollisionPoint(nearestPoint);
+        bk.setLastCollisionPoint(nearestPoint);
+      }
     }
-  }
 
-  for (auto &sf : m_snowflakes) {
-    if (Collision::checkAABB(m_player->getRect(), sf.getRect())) {
-      sf.consume();
+    // check if player is colliding with snowflake
+    for (auto &sf : m_snowflakes) {
+      if (Collision::checkAABB(m_player->getRect(), sf.getRect())) {
+        sf.consume();
+      }
     }
   }
 
@@ -94,7 +101,7 @@ StateRequest LevelScreen::update(float dt) {
 }
 
 void LevelScreen::draw(Renderer &renderer) {
-  C2D_TargetClear(renderer.getTopScreen(), clrWhite);
+  renderer.clear(renderer.getTopScreen(), clrWhite);
 
   m_player->draw(renderer);
 

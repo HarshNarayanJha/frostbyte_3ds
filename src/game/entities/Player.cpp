@@ -6,6 +6,8 @@
 #include "../../engine/math/Math.hpp"
 #include "../../engine/math/Rect.hpp"
 #include "../../engine/util/Logger.hpp"
+#include "effects/DieEffect.hpp"
+#include <memory>
 
 Player::Player(float x, float y, float size, float speed, float accel, float decel, float gravity)
     : m_pos(x, y), m_size(size), m_vel(0, 0), m_speed(speed), m_accel(accel), m_decel(decel), m_gravity(gravity) {
@@ -13,6 +15,15 @@ Player::Player(float x, float y, float size, float speed, float accel, float dec
 }
 
 void Player::update(float dt) {
+  if (m_damaged) {                 // process the die effect instead
+    if (m_dieEffect->update(dt)) { // mark as dead finally
+      Logger::debug("Player::update die effect finished. Marking as died.");
+      m_died = true;
+    }
+
+    return;
+  }
+
   Vec2 direction = InputManager::direction();
   direction.normalize();
 
@@ -27,6 +38,9 @@ void Player::update(float dt) {
 }
 
 void Player::collideWorldBoundary() {
+  if (m_damaged)
+    return;
+
   if (getRect().left() < 0.0f) {
     m_pos.x = 0.0f + m_size;
     m_vel.x = -m_vel.x * m_bounciness;
@@ -45,6 +59,12 @@ void Player::collideWorldBoundary() {
 }
 
 void Player::draw(Renderer &renderer) {
+  if (m_damaged) {
+    // process the die effect instead
+    m_dieEffect->draw(renderer);
+    return;
+  }
+
   renderer.drawCircle(m_pos, m_size, clrBlack);
 
   if (DEBUG_DRAW_VELOCITY) {
@@ -62,6 +82,9 @@ void Player::draw(Renderer &renderer) {
 }
 
 void Player::bounce(const Rect &other, const Vec2 &hitPoint) {
+  if (m_damaged)
+    return;
+
   // TODO: Receive normal instead and do a proper mirror
   // separating axis resolution
   // https://www.youtube.com/watch?v=dn0hUgsok9M&t=300s
@@ -79,7 +102,20 @@ void Player::bounce(const Rect &other, const Vec2 &hitPoint) {
   }
 }
 
+void Player::damage() {
+  if (m_damaged || m_died)
+    return;
+
+  Logger::debug("Player::damage initializing dieEffect and marking damaged");
+  m_dieEffect = std::make_unique<DieEffect>(DIE_ANIMATION_DURATION_SECONDS, m_pos);
+  m_damaged   = true;
+  m_vel       = {0, 0};
+}
+
 void Player::applyDelta(Vec2 delta) {
+  if (m_damaged)
+    return;
+
   m_pos += delta;
 }
 
@@ -100,4 +136,12 @@ Rect Player::getRect() const {
 
 float Player::getSize() const {
   return m_size;
+}
+
+bool Player::isDead() const {
+  return m_died;
+}
+
+bool Player::isDamaged() const {
+  return m_damaged;
 }

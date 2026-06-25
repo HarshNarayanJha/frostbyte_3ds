@@ -27,7 +27,7 @@ StateRequest MainMenuScreen::update(float dt) {
 }
 
 void MainMenuScreen::draw(Renderer &renderer) {
-  C2D_TargetClear(renderer.getTopScreen(), clrBg);
+  renderer.clear(renderer.getTopScreen(), clrBg);
 
   renderer.drawRect(toprect.pos, toprect.size, clrBlue);
 
