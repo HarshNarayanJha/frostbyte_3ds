@@ -14,5 +14,5 @@ x 2026-06-19 2026-06-18 main menu
 2026-06-18 blackholes
 2026-06-18 shooters
 x 2026-06-18 2026-06-18 add logging system
-(C) better screen transitions
+x 2026-06-28 2026-06-28 better screen transitions
 (A) level loading from level files

@@ -8,9 +8,9 @@ constexpr float SCREEN_WIDTH     = 400.0f;
 constexpr float SCREEN_HEIGHT    = 240.0f;
 
 constexpr float PLAYER_RADIUS    = 8.0f;
-constexpr float SPEED            = 300.0f;
-constexpr float ACCELERATION     = 200.0f;
-constexpr float DECELERATION     = 50.0f;
+constexpr float SPEED            = 200.0f;
+constexpr float ACCELERATION     = 100.0f;
+constexpr float DECELERATION     = 25.0f;
 constexpr float GRAVITY_CONSTANT = 1000000.0f;
 
 #define DEBUG_DRAW_BBOX false

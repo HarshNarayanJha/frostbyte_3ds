@@ -8,6 +8,14 @@ struct Rect;
 class Renderer;
 
 class Player {
+public:
+  enum class State : u8 {
+    IDLE,
+    MOVING,
+    DAMAGED,
+    DEAD,
+  };
+
 private:
   Vec2  m_pos;
   float m_size;
@@ -16,8 +24,8 @@ private:
   float m_accel;
   float m_decel;
   float m_gravity;
-  bool  m_damaged    = false;
-  bool  m_died       = false;
+
+  State m_state      = State::IDLE;
 
   float m_bounciness = 0.8f;
 
@@ -67,6 +75,10 @@ public:
   Vec2  getVel() const;
   Rect  getRect() const;
   float getSize() const;
+
   bool  isDead() const;
   bool  isDamaged() const;
+  State getState() const {
+    return m_state;
+  }
 };

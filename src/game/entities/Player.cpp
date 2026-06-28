@@ -15,10 +15,13 @@ Player::Player(float x, float y, float size, float speed, float accel, float dec
 }
 
 void Player::update(float dt) {
-  if (m_damaged) {                 // process the die effect instead
+  if (isDead())
+    return;
+
+  if (isDamaged()) {               // process the die effect instead
     if (m_dieEffect->update(dt)) { // mark as dead finally
       Logger::debug("Player::update die effect finished. Marking as died.");
-      m_died = true;
+      m_state = State::DEAD;
     }
 
     return;
@@ -35,10 +38,15 @@ void Player::update(float dt) {
 
   m_pos.x += m_vel.x * dt;
   m_pos.y += m_vel.y * dt;
+
+  if (m_vel.lenSquared() > 1.0f)
+    m_state = State::MOVING;
+  else
+    m_state = State::IDLE;
 }
 
 void Player::collideWorldBoundary() {
-  if (m_damaged)
+  if (isDamaged() || isDead())
     return;
 
   if (getRect().left() < 0.0f) {
@@ -59,7 +67,10 @@ void Player::collideWorldBoundary() {
 }
 
 void Player::draw(Renderer &renderer) {
-  if (m_damaged) {
+  if (isDead())
+    return;
+
+  if (isDamaged()) {
     // process the die effect instead
     m_dieEffect->draw(renderer);
     return;
@@ -82,7 +93,7 @@ void Player::draw(Renderer &renderer) {
 }
 
 void Player::bounce(const Rect &other, const Vec2 &hitPoint) {
-  if (m_damaged)
+  if (isDamaged() || isDead())
     return;
 
   // TODO: Receive normal instead and do a proper mirror
@@ -103,17 +114,17 @@ void Player::bounce(const Rect &other, const Vec2 &hitPoint) {
 }
 
 void Player::damage() {
-  if (m_damaged || m_died)
+  if (isDamaged() || isDead())
     return;
 
   Logger::debug("Player::damage initializing dieEffect and marking damaged");
   m_dieEffect = std::make_unique<DieEffect>(DIE_ANIMATION_DURATION_SECONDS, m_pos);
-  m_damaged   = true;
+  m_state     = State::DAMAGED;
   m_vel       = {0, 0};
 }
 
 void Player::applyDelta(Vec2 delta) {
-  if (m_damaged)
+  if (isDamaged() || isDead())
     return;
 
   m_pos += delta;
@@ -139,9 +150,9 @@ float Player::getSize() const {
 }
 
 bool Player::isDead() const {
-  return m_died;
+  return m_state == State::DEAD;
 }
 
 bool Player::isDamaged() const {
-  return m_damaged;
+  return m_state == State::DAMAGED;
 }

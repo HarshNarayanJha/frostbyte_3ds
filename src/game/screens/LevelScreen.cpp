@@ -33,7 +33,7 @@ LevelScreen::~LevelScreen() {
 }
 
 StateRequest LevelScreen::update(float dt) {
-  Logger::trace("LevelScreen::update");
+  Logger::trace("LevelScreen::update %f", dt);
 
   // handle reload
   if (InputManager::isDown(KEY_X)) {
