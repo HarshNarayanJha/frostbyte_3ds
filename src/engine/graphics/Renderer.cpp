@@ -6,7 +6,7 @@ Renderer::Renderer() = default;
 bool Renderer::Init(Renderer::InitMode mode) {
   Logger::info("Renderer::Init");
 
-  // init renderer somehow
+  m_initMode = mode;
   gfxInitDefault();
 
   if (!C3D_Init(C3D_DEFAULT_CMDBUF_SIZE)) {
@@ -74,4 +74,32 @@ void Renderer::prepareFrame() {
 void Renderer::finishFrame() {
   // Swap screens and synchronize frame-rate
   C3D_FrameEnd(0);
+}
+
+void Renderer::printTextConsole(const char *text, int row, int col) {
+  if (m_initMode == InitMode::CONSOLE_NONE) {
+    Logger::debug("Renderer::printTextConsole called with InitMode::CONSOLE_NONE. Ignoring");
+    return;
+  }
+
+  // To move the cursor you have to print "\x1b[r;cH", where r and c are respectively
+  // the row and column where you want your cursor to move
+  // The top screen has 30 rows and 50 columns
+  // The bottom screen has 30 rows and 40 columns
+  if (row != -1 && col != -1) {
+    printf("\x1b[%d;%dH", row, col);
+  } else if (row != -1 || col != -1) {
+    Logger::debug("Renderer::printTextConsole both row and col must be provided together");
+  }
+
+  printf("%s", text);
+}
+
+void Renderer::clearTextConsole() {
+  if (m_initMode == InitMode::CONSOLE_NONE) {
+    Logger::debug("Renderer::clearTextConsole called with InitMode::CONSOLE_NONE. Ignoring");
+    return;
+  }
+
+  printf("\033[2J");
 }

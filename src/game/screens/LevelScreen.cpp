@@ -6,6 +6,8 @@
 #include "../constants.hpp"
 #include "../data/LevelData.hpp"
 
+#include <format>
+
 LevelScreen::LevelScreen(const LevelData &levelData, GameData &data)
     : m_data(data), m_currentLevelId(levelData.levelId) {
   Logger::info("LevelScreen::LevelScreen init levelId: %d", m_currentLevelId);
@@ -129,4 +131,12 @@ void LevelScreen::draw(Renderer &renderer) {
   for (auto &sf : m_snowflakes) {
     sf.draw(renderer);
   }
+
+  renderer.clearTextConsole();
+  renderer.printTextConsole("GameData:", 2, 8);
+  renderer.printTextConsole(std::format("Snowflakes: {}", m_data.snowflakes).c_str(), 4, 8);
+  renderer.printTextConsole(std::format("Snowflakes (this): {}", m_data.snowflakesThisLevel).c_str(), 5, 8);
+  renderer.printTextConsole(std::format("Hits: {}", m_data.hits).c_str(), 6, 8);
+  renderer.printTextConsole(std::format("Dies: {}", m_data.dies).c_str(), 7, 8);
+  renderer.printTextConsole(std::format("Game seconds: {:.2f}", m_data.game_seconds).c_str(), 8, 8);
 };

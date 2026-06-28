@@ -8,10 +8,6 @@
  * Renders graphics using the Citro2D library. Provides static methods for drawing various shapes.
  */
 class Renderer {
-private:
-  C3D_RenderTarget *m_topScreen{};
-  C3D_RenderTarget *m_bottomScreen{};
-
 public:
   Renderer();
   ~Renderer();
@@ -32,6 +28,19 @@ public:
   void clear(C3D_RenderTarget *target, u32 color) {
     C2D_TargetClear(target, color);
   }
+
+  /**
+   * Prints text to the console at the specified row and column.
+   * If row or col is -1, the text is printed at the current cursor position.
+   * The top screen has 30 rows and 50 columns
+   * The bottom screen has 30 rows and 40 columns
+   */
+  void printTextConsole(const char *text, int row = -1, int col = -1);
+
+  /**
+   * Clears the text console.
+   */
+  void clearTextConsole();
 
   void drawFade(u32 color) {
     // TODO, make them screen width and height properly
@@ -72,4 +81,10 @@ public:
   void drawLine(const Vec2 &start, const Vec2 &end, u32 color, float thickness = 1.0f, float z = 0.5f) {
     C2D_DrawLine(start.x, start.y, color, end.x, end.y, color, thickness, z);
   }
+
+private:
+  InitMode m_initMode;
+
+  C3D_RenderTarget *m_topScreen{};
+  C3D_RenderTarget *m_bottomScreen{};
 };

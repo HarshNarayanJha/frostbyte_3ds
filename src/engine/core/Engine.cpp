@@ -3,6 +3,7 @@
 #include "../graphics/Renderer.hpp"
 #include "../input/InputManager.hpp"
 #include "../util/Logger.hpp"
+#include <format>
 
 Engine::Engine() = default;
 
@@ -15,13 +16,9 @@ bool Engine::Init() {
   m_renderer = std::make_unique<Renderer>();
   m_renderer->Init(Renderer::InitMode::CONSOLE_BOTTOM);
 
-  // To move the cursor you have to print "\x1b[r;cH", where r and c are respectively
-  // the row and column where you want your cursor to move
-  // The top screen has 30 rows and 50 columns
-  // The bottom screen has 30 rows and 40 columns
-  printf("\x1b[8;15HHello World!");
-  printf("\x1b[11;10HThis is %s", APP_NAME);
-  printf("\x1b[15;12HPress Select to exit.");
+  m_renderer->printTextConsole("Hello World!", 8, 15);
+  m_renderer->printTextConsole(std::format("This is {}", APP_NAME).c_str(), 11, 10);
+  m_renderer->printTextConsole("Press Select to exit.", 15, 12);
 
   return true;
 }
