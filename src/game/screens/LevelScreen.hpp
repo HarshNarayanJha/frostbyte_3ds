@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../constants.hpp"
+#include "../data/GameData.hpp"
 #include "../data/LevelData.hpp"
 #include "../entities/Block.hpp"
 #include "../entities/Player.hpp"
@@ -11,7 +12,7 @@
 
 class LevelScreen : public Screen {
 public:
-  LevelScreen(const LevelData &levelData);
+  LevelScreen(const LevelData &levelData, GameData &data);
   ~LevelScreen() override;
 
   StateRequest update(float dt) override;
@@ -22,6 +23,7 @@ public:
   }
 
 private:
+  GameData               &m_data;
   int                     m_currentLevelId;
   std::unique_ptr<Player> m_player;
   std::vector<Block>      m_blocks;

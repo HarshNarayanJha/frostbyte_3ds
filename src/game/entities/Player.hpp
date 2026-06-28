@@ -47,8 +47,9 @@ public:
   /**
    * Resolves the player's collision with the world boundary, bouncing off if necessary.
    * Called every frame if collision with world bounds is required.
+   * Returns true if the player collided with the world boundary, false otherwise.
    */
-  void collideWorldBoundary();
+  bool collideWorldBoundary();
 
   /**
    * Draws the player on the screen using the provided renderer.
@@ -78,6 +79,7 @@ public:
 
   bool  isDead() const;
   bool  isDamaged() const;
+  bool  isAlive() const;
   State getState() const {
     return m_state;
   }

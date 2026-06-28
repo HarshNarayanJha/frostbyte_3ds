@@ -6,7 +6,8 @@
 #include "../constants.hpp"
 #include "../data/LevelData.hpp"
 
-LevelScreen::LevelScreen(const LevelData &levelData) : m_currentLevelId(levelData.levelId) {
+LevelScreen::LevelScreen(const LevelData &levelData, GameData &data)
+    : m_data(data), m_currentLevelId(levelData.levelId) {
   Logger::info("LevelScreen::LevelScreen init levelId: %d", m_currentLevelId);
 
   m_player = std::make_unique<Player>(levelData.playerSpawn.x,
@@ -35,9 +36,12 @@ LevelScreen::~LevelScreen() {
 StateRequest LevelScreen::update(float dt) {
   Logger::trace("LevelScreen::update %f", dt);
 
+  m_data.game_seconds += dt;
+
   // handle reload
   if (InputManager::isDown(KEY_X)) {
     Logger::debug("KEY_X Pressed in Level. Reloading current level.");
+    m_data.resetLevel();
     return {GameState::LEVEL, m_currentLevelId};
   }
 
@@ -52,6 +56,7 @@ StateRequest LevelScreen::update(float dt) {
   // TODO: Check actual level progress logic
   if (InputManager::isDown(KEY_A)) {
     Logger::debug("KEY_A Pressed in Level. Progressing to next level.");
+    m_data.resetLevel();
     return {GameState::LEVEL, m_currentLevelId + 1};
   }
 
@@ -61,7 +66,9 @@ StateRequest LevelScreen::update(float dt) {
   }
 
   m_player->update(dt);
-  m_player->collideWorldBoundary();
+  if (m_player->collideWorldBoundary()) {
+    m_data.countWallHit();
+  }
 
   for (auto &bk : m_blocks) {
     bk.update(dt);
@@ -71,7 +78,7 @@ StateRequest LevelScreen::update(float dt) {
     sf.update(dt);
   }
 
-  if (!m_player->isDamaged()) {
+  if (m_player->isAlive()) {
     // Check collisions with blocks
     for (auto &bk : m_blocks) {
       Vec2  nearestPoint = Collision::getNearestPointOnRect(m_player->getPos(), bk.getRect());
@@ -84,15 +91,19 @@ StateRequest LevelScreen::update(float dt) {
       if (overlap > 0) {
         Logger::debug("Collision detected with block. Overlap: %.4f. Calling .damage() on player.", overlap);
         m_player->damage();
+        m_data.countDie();
 
         bk.setLastCollisionPoint(nearestPoint);
       }
     }
 
     // check if player is colliding with snowflake
-    for (auto &sf : m_snowflakes) {
-      if (Collision::checkAABB(m_player->getRect(), sf.getRect())) {
-        sf.consume();
+    for (auto it = m_snowflakes.begin(); it != m_snowflakes.end();) {
+      if (Collision::checkAABB(m_player->getRect(), it->getRect())) {
+        it = m_snowflakes.erase(it);
+        m_data.countSnowflake();
+      } else {
+        it++;
       }
     }
   }

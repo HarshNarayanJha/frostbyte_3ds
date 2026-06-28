@@ -5,12 +5,12 @@ x 2026-06-18 2026-06-18 basic collision
 x 2026-06-19 2026-06-18 level concept
 x 2026-06-19 2026-06-18 level creation
 (B) 2026-06-18 level completion
-(B) 2026-06-18 score, hits, rip and time trackers
+x 2026-06-28 2026-06-18 score, hits, rip and time trackers
 (B) 2026-06-18 stats overlay on screen
 x 2026-06-19 2026-06-18 screen transitions
 x 2026-06-19 2026-06-18 main menu
 (C) 2026-06-18 audio fx and music
-(B) 2026-06-18 die and replay
+x 2026-06-28 2026-06-18 die and replay
 2026-06-18 blackholes
 2026-06-18 shooters
 x 2026-06-18 2026-06-18 add logging system

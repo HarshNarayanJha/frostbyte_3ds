@@ -1,5 +1,6 @@
 #pragma once
 
+#include "data/GameData.hpp"
 #include "states/GameState.hpp"
 #include <memory>
 
@@ -26,6 +27,7 @@ public:
 
 private:
   GameState               m_state;
+  GameData                m_data;
   std::unique_ptr<Engine> m_engine;
 
   std::unique_ptr<Screen> m_activeScreen;

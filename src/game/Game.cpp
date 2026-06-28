@@ -35,7 +35,7 @@ void Game::changeState(StateRequest request) {
 
   case GameState::LEVEL:
     Logger::info("Game::changeState state=InLevel data=%d", request.data);
-    m_activeScreen = std::make_unique<LevelScreen>(LevelRegistry::getLevel(request.data));
+    m_activeScreen = std::make_unique<LevelScreen>(LevelRegistry::getLevel(request.data), m_data);
     break;
 
   case GameState::NONE:
@@ -110,7 +110,7 @@ void Game::draw() {
   }
 
   if (m_fadeState != FadeState::NONE) {
-    Logger::debug("Game::draw: fadeState=%d, fadeAlpha=%.2f", static_cast<int>(m_fadeState), m_fadeAlpha);
+    Logger::trace("Game::draw: fadeState=%d, fadeAlpha=%.2f", static_cast<int>(m_fadeState), m_fadeAlpha);
     u8  r         = (m_fadeColor >> 16) & 0xFF;
     u8  g         = (m_fadeColor >> 8) & 0xFF;
     u8  b         = m_fadeColor & 0xFF;

@@ -45,25 +45,33 @@ void Player::update(float dt) {
     m_state = State::IDLE;
 }
 
-void Player::collideWorldBoundary() {
+bool Player::collideWorldBoundary() {
   if (isDamaged() || isDead())
-    return;
+    return false;
+
+  bool collided = false;
 
   if (getRect().left() < 0.0f) {
-    m_pos.x = 0.0f + m_size;
-    m_vel.x = -m_vel.x * m_bounciness;
+    m_pos.x  = 0.0f + m_size;
+    m_vel.x  = -m_vel.x * m_bounciness;
+    collided = true;
   } else if (getRect().right() > SCREEN_WIDTH) {
-    m_pos.x = SCREEN_WIDTH - m_size;
-    m_vel.x = -m_vel.x * m_bounciness;
+    m_pos.x  = SCREEN_WIDTH - m_size;
+    m_vel.x  = -m_vel.x * m_bounciness;
+    collided = true;
   }
 
   if (getRect().top() < 0.0f) {
-    m_pos.y = 0.0f + m_size;
-    m_vel.y = -m_vel.y * m_bounciness;
+    m_pos.y  = 0.0f + m_size;
+    m_vel.y  = -m_vel.y * m_bounciness;
+    collided = true;
   } else if (getRect().bottom() > SCREEN_HEIGHT) {
-    m_pos.y = SCREEN_HEIGHT - m_size;
-    m_vel.y = -m_vel.y * m_bounciness;
+    m_pos.y  = SCREEN_HEIGHT - m_size;
+    m_vel.y  = -m_vel.y * m_bounciness;
+    collided = true;
   }
+
+  return collided;
 }
 
 void Player::draw(Renderer &renderer) {
@@ -155,4 +163,8 @@ bool Player::isDead() const {
 
 bool Player::isDamaged() const {
   return m_state == State::DAMAGED;
+}
+
+bool Player::isAlive() const {
+  return m_state == State::IDLE || m_state == State::MOVING;
 }
